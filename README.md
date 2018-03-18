@@ -1,2 +1,7 @@
 # Blockchain Memberships
 Blockchain Based Memberships for Blockchain Australia
+
+## Rinkeby
+
+Contract 0x372ce4c2f53c4bd8a47e83cc306c69cbd841e646
+Owner 0xe2356d29d5dfecb4ee43c031204aeded24749959
