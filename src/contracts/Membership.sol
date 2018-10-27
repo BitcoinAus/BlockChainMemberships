@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 contract Membership {
     address private _owner;
@@ -15,6 +15,7 @@ contract Membership {
     enum MembershipLevel {
         Annual,
         Life,
+        Board,
         ExBoard
     }
 
@@ -22,61 +23,113 @@ contract Membership {
         uint256 issued;
         uint256 validFrom;
         uint256 expires;
+        MembershipLevel level;
     }
 
-    function Membership() public {
+    constructor() public {
         _owner = msg.sender;
     }
 
-    function addLifeMember(address _member) public onlyOwner {
-        require(_member != 0x00);
+    function addAnnualMember(address _member) public onlyBoard() {
+        require(_member != 0x00, "Invalid address");
 
-        members[_member] = Member(now, now, now + 1000 years);
+        members[_member] = Member(now, now, now + 1 years, 0);
+        totalMembers += 1;
 
-        NewMember(_member);
+        emit NewMember(_member);
     }
 
-    function addAnnualMember(address _member) public onlyOwner {
-        require(_member != 0x00);
 
-        members[_member] = Member(now, now, now + 1 years);
-
-        NewMember(_member);
-    }
-
-    function revokeMember(address _member) public onlyOwner {
-        delete members[_member];
-    }
-
-    function buyMembership() public payable {
-        require(msg.value > annual);
+    function buyAnnualMembership() public payable {
+        require(msg.value > annual, "Fee too small");
 
         uint256 expires = now + 1 years;
 
-        if (msg.value > 1 ether) {
-            expires = now + 1000 years;
-        }
+        members[msg.sender] = Member(now, now, expires, 1);
+        totalMembers += 1;
 
-        members[msg.sender] = Member(now, now, expires);
+        emit NewMember(msg.sender);
     }
 
-    function isValid(address _member) public view returns (bool) {
-        return members[_member].validFrom > now && members[_member].expires < now;
+    function isAnnualMember(address who) external view returns (bool) {
+        return members[who].level == MembershipLevel.Annual;
     }
 
-    function setLifeFee(uint256 _value) public onlyOwner {
+    function addLifeMember(address _member) public onlyBoard() {
+        require(_member != 0x00, "Invalid address");
+
+        members[_member] = Member(now, now, now + 1000 years, 1);
+        totalMembers += 1;
+
+        emit NewMember(_member);
+    }
+
+    function isLifeMember(address who) external view returns (bool) {
+        return members[who].level == MembershipLevel.Life;
+    }
+
+    function buyLifeMembership() public payable {
+        require(msg.value > annual, "Fee too small");
+
+        uint256 expires = now + 1000 years;
+
+        members[msg.sender] = Member(now, now, expires, 2);
+        totalMembers += 1;
+
+        emit NewMember(msg.sender);
+    }
+
+    function addBoardMember(address _member) public onlyBoard() {
+        require(_member != 0x00, "Invalid address");
+
+        members[_member] = Member(now, now, now + 1000 years, 2);
+        totalMembers += 1;
+
+        emit NewMember(_member);
+    }
+
+    function isBoardMember(address who) external view returns (bool) {
+        return members[who].level == MembershipLevel.Board;
+    }
+
+    function retire() public onlyBoard() {
+        //retire from the board
+    }
+
+    function revokeMember(address _member) public onlyBoard() {
+        delete members[_member];
+        totalMembers -= 1;
+    }
+
+    function isValid(address who) public view returns (bool) {
+        return members[who].validFrom > now && members[who].expires < now;
+    }
+
+
+    function setLifeFee(uint256 _value) public onlyBoard() {
         life = _value;
     }
 
-    function setAnnualFee(uint256 _value) public onlyOwner {
-        annual = _value;
+    function setAnnualFee(uint256 value) public onlyBoard() {
+        annual = value;
+        emit FeeUpdated(value);
+    }
+
+    function withdraw(address to) public onlyBoard() {
+        
     }
 
     event NewMember(address _member);
+    event FeeUpdated(uint256 value);
 
     modifier onlyOwner() {
         require(msg.sender == _owner);
 
         _;
     }
+
+    modifier onlyBoard() {
+
+    }
+
 }
