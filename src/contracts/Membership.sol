@@ -101,8 +101,8 @@ contract Membership {
         totalMembers -= 1;
     }
 
-    function isValid(address who) public view returns (bool) {
-        return members[who].validFrom > now && members[who].expires < now;
+    function isCurrentMember(address to) public view returns (bool) {
+        return members[to].validFrom > now && members[to].expires < now;
     }
 
 
