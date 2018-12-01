@@ -39,7 +39,6 @@ contract Membership {
         emit NewMember(_member);
     }
 
-
     function buyAnnualMembership() public payable {
         require(msg.value > annual, "Fee too small");
 
@@ -56,7 +55,7 @@ contract Membership {
     }
 
     function addLifeMember(address _member) public onlyBoard() {
-        require(_member != 0x00, "Invalid address");
+        require(_member != address(0), "Invalid address");
 
         members[_member] = Member(now, now, now + 1000 years, 1);
         totalMembers += 1;
@@ -80,7 +79,7 @@ contract Membership {
     }
 
     function addBoardMember(address _member) public onlyBoard() {
-        require(_member != 0x00, "Invalid address");
+        require(_member != address(0), "Invalid address");
 
         members[_member] = Member(now, now, now + 1000 years, 2);
         totalMembers += 1;
