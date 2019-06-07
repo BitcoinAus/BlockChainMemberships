@@ -22,12 +22,12 @@ contract Membership {
     }
 
     function nominate(address who) public onlyBoard() {
-        require(who != 0x00, "Invalid address");
+        require(who != address(0), "Invalid address");
 
-        members[_member] = Member(now, now, now + 1 years, 0);
+        members[who] = Member(now, now, now + 1 years, 0);
         totalMembers += 1;
 
-        emit NewMember(_member);
+        emit NewMember(who);
     }
 
     function selfNominate(address _member) public {
@@ -48,7 +48,7 @@ contract Membership {
         delete members[msg.sender];
     }
 
-    function revokeMember(address _member) public onlyBoard() {
+    function revokeMember(address who) public onlyBoard() {
         delete members[_member];
         totalMembers -= 1;
     }

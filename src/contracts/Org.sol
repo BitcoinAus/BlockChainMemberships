@@ -12,7 +12,7 @@ contract BlockchainAustralia {
         string Name;
     }
 
-    constrctor () public {
+    constructor () public {
         _owner = msg.sender;
     }
 
