@@ -6,19 +6,28 @@ contract ERC1261 is IERC1261 {
 
     address private _owner;
     uint256 private _memberCount;
+    
+    struct MemberData {
+        bool hasToken;
+        uint[] data;
+    }
+
+    struct PendingRequest {
+        bool isPending;
+        uint[] attributes;
+    }
+    
+    mapping(uint => bytes32[]) public attributeValueCollection;
+    bytes32[] public attributeNames;
+
+    mapping(address => MemberData) public currentHolders;
+    mapping(address => PendingRequest) public pendingRequests;
+
+    address[] public allHolders;
+
 
     mapping(address => address) private _members;
-    mapping(address => address) private _applicants;
-    
-    mapping(address => uint256[]) private _requests;
 
-    //mapping private _attributes;
-
-    bytes32[] _attributes;
-
-    // struct member {
-
-    // }
 
 
    
