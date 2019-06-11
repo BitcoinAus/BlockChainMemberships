@@ -9,6 +9,8 @@ contract ERC1261 is IERC1261 {
 
     mapping(address => address) private _members;
     mapping(address => address) private _applicants;
+    
+    mapping(address => uint256[]) private _requests;
 
     //mapping private _attributes;
 
@@ -19,15 +21,10 @@ contract ERC1261 is IERC1261 {
     // }
 
 
-    
-
+   
     constructor() public {
         _owner = msg.sender;
-
-        _attributes.push("Entity");
-        _attributes.push("ABN");
-        _attributes.push("Url");
-        _attributes.push("Twitter");
+        _attributes.push("MembershipType");
     }
 
     /// @notice Adds a new attribute (key, value) pair to the set of pre-existing attributes.
@@ -55,14 +52,17 @@ contract ERC1261 is IERC1261 {
     ///  dev can also oraclize the request to assign membership later
     /// @param _attributeIndexes the attribute data associated with the member.
     ///  This is an array which contains indexes of attributes.
-    function requestMembership(uint[] calldata _attributeIndexes) external payable;
+    function requestMembership(uint[] calldata _attributeIndexes) external payable {
+        _requests[msg.sender] = _attributeIndexes;
+    }
 
     /// @notice User can forfeit his membership.
     /// @dev Throws if the `msg.sender` already doesn't have the token.
     ///  The individual `msg.sender` can revoke his/her membership.
     ///  When the token is revoked, this function emits the Revoked event.
-    function forfeitMembership() external payable;
-
+    function forfeitMembership() external payable {
+        delete _members[msg.sender];
+    }
 
     function approveRequest(address _user) external onlyOwner() {
         if (_applicants[_user] != address(0)) {
