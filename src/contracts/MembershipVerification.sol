@@ -1,8 +1,7 @@
 pragma solidity ^0.5.8;
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "openzeppelin-solidity/contracts/introspection/ERC165.sol";
-import "./Protocol/IERC1261.sol";
+import "./Ownable.sol";
+import "./Interfaces.sol";
 
 contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
     struct MemberData {
