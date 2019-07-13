@@ -42,7 +42,7 @@ contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
         _;
     }
 
-    function requestMembership(uint[] _attributeIndexes) external payable {
+    function requestMembership(uint[] calldata _attributeIndexes) external payable {
         require(!isCurrentMember(msg.sender), "Already a member");
         require(_attributeIndexes.length == attributeNames.length, "Need to input all attributes");
 
@@ -71,7 +71,7 @@ contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
         delete request.attributes;
     }
 
-    function assignTo(address _to, uint[] _attributeIndexes) external onlyOwner {
+    function assignTo(address _to, uint[] calldata _attributeIndexes) external onlyOwner {
         _assign(_to, _attributeIndexes);
         emit Assigned(_to, _attributeIndexes);
     }
@@ -81,7 +81,7 @@ contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
         emit Revoked(_from);
     }
 
-    function addAttributeSet(bytes32 _name, bytes32[] values) external {
+    function addAttributeSet(bytes32 _name, bytes32[] calldata values) external {
         attributeNames.push(_name);
         bytes32[] storage storedValues = attributeValueCollection[attributeNames.length - 1];
         storedValues.push(0x756e646566696e65640000000000000000000000000000000000000000000000);
@@ -110,7 +110,7 @@ contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
         );
     }
 
-    function getAllMembers() external view returns (address[]) {
+    function getAllMembers() external view returns (address[] memory) {
         return allHolders;
     }
 
@@ -118,16 +118,16 @@ contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
         return currentMemberCount;
     }
 
-    function getAttributeNames() external view returns (bytes32[]) {
+    function getAttributeNames() external view returns (bytes32[] memory) {
         return attributeNames;
     }
 
-    function getAttributes(address _to) external view returns (uint[]) {
+    function getAttributes(address _to) external view returns (uint[] memory) {
         require(_to != address(0), "Address cannot be zero");
         return currentHolders[_to].data;
     }
 
-    function getAttributeExhaustiveCollection(uint _index) external view returns (bytes32[]) {
+    function getAttributeExhaustiveCollection(uint _index) external view returns (bytes32[] memory) {
         return attributeValueCollection[_index];
     }
 
@@ -141,7 +141,7 @@ contract MembershipVerificationToken is IERC1261, Ownable, ERC165 {
         return currentHolders[_to].hasToken;
     }
 
-    function _assign(address _to, uint[] _attributeIndexes) internal {
+    function _assign(address _to, uint[] memory _attributeIndexes) internal {
         require(_to != address(0), "Can't assign to zero address");
         require(_attributeIndexes.length == attributeNames.length, "Need to input all attributes");
         MemberData memory member;
