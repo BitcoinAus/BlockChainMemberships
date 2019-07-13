@@ -2,16 +2,16 @@ pragma solidity ^0.4.24;
 
 import "./Interfaces.sol";
 
-contract LifeMember is IERC1261 {
+contract BoardMember is IERC1261 {
 
     //mapping (address => address) private _lifeMembers;
-    address[] private _lifeMembers;
+    address[] private _members;
 
     uint256 public fee;
 
     function isCurrentMember(address _to) external view returns (bool) {
-        for (uint i = 0; i < _lifeMembers.length; i++) {
-            if (_lifeMembers[i] == _to) {
+        for (uint i = 0; i < _members.length; i++) {
+            if (_members[i] == _to) {
                 return true;
             }
         }
@@ -20,11 +20,11 @@ contract LifeMember is IERC1261 {
     }
 
     function getAllMembers() external view returns (address[]) {
-        return _lifeMembers;
+        return _members;
     }
 
     function getCurrentMemberCount() external view returns (uint) {
-        return _lifeMembers.length;
+        return _members.length;
     }
 
     function requestMembership(uint[] data) external payable {
